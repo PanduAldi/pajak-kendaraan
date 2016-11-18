@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pajak Kendaraan</title>
+
+	<link rel="stylesheet" href="https://bootswatch.com/cosmo/bootstrap.min.css">
+
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js" integrity="sha256-8WqyJLuWKRBVhxXIL1jBDD7SDxU936oZkCnxQbWwJVw=" crossorigin="anonymous"></script>
+	
+	<style>
+		body {
+			margin-top: 15px;
+		}
+	</style>
+
+	<script>
+		
+	//cari nopol
+	function cari()
+	{
+		$(document).ready(function(){
+			var plat  = $("#plat").val();
+			var nomor = $("#nomor").val();
+			var seri  = $("#seri").val();
+		
+			$.ajax({
+				url : "http://ibacor.com/api/pajak-kendaraan?kode="+plat+"&nomor="+nomor+"&seri="+seri,
+				type : "GET",
+				dataType : "JSON",
+				beforeSend : function(){
+					$(".hasil").html("<center> <img src='ajax-loader.gif' alt='loading' /> </center>");
+				},
+				success : function(msg){
+
+					if (msg.status == "error") 
+					{
+						$(".hasil").html('<div class="alert alert-danger">'+msg.message+'</div>');
+					}
+					else
+					{
+						data = '<div class="panel panel-primary">';
+						data += '<h3>Provinsi : '+msg.provinsi+'</h3>';
+						data +=	'<div class="panel-body">';
+						data +=	'	<ul>';
+						data += '		<li>Nomor Polisi : '+msg.data.nopol+'</li>';
+						data += '		<li>';
+						data +=	'			Kendaraan :';
+						data +=	'		<ul>';
+						data +=	'			<li>Jenis : '+msg.data.kendaraan.jenis+'</li>';
+						data += '			<li>merk  : '+msg.data.kendaraan.merk+'</li>';
+						data +=	'			<li>Type : '+msg.data.kendaraan.type+'</li>';
+						data +=	'			<li>Tahun Pembuatan : '+msg.data.kendaraan.tahun_pembuatan+'</li>';
+						data += '			<li>Warna : '+msg.data.kendaraan.warna+'</li>';
+						data +=	'			<li>Wilayah  : '+msg.data.kendaraan.wilayah+'</li>';
+						data += '		</ul>';
+						data +=	'		</li>';
+						data +=	'		<li>';
+						data += '			Pajak Kendaraan Bermotor : '; 
+						data +=	'			<ul>';
+						data +=	'				<li>Jumlah : '+msg.data.pkb.jumlah+'</li>';
+						data +=	'				<li>Jatuh Tempo : '+msg.data.pkb.jatuh_tempo+'</li>';
+						data +=	'			</ul>';
+						data +=	'		</li>';
+						data +=	'		<li>';
+						data +=	'			Biaya :'; 
+						data +=	'			<ul>';
+						data +=	'				<li>Balik Nama : '+msg.data.biaya.balik_nama+'</li>';
+						data +=	'				<li>Jasa Raharja : '+msg.data.biaya.jasa_raharja+'</li>';
+						data +=	'			</ul>';
+						data +=	'		</li>';
+						data += '				</ul>';
+						data += '		</li>';
+						data +=	'	</ul>';
+						data += '   <small><em>Sumber : '+msg.sumber+'</em></small>';
+						data += ' </div>';
+						data += '</div>';
+
+						$(".hasil").html(data);	
+					}
+					
+				}
+			})
+		});
+	}
+
+	</script>
+</head>
+<body>
+	<div class="container">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Cek Pajak Kendaraan 
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-4 col-xs-12">
+						<div class="panel panel-success">
+							<div class="panel-heading">
+								Masukan Nomor Polisi Kendaraan
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-lg-3 col-xs-12">
+										<label for="" class="control-label">Plat :</label>
+										<input type="text" id='plat' class="form-control text-uppercase" placeholder="G">
+									</div>
+									<div class="col-lg-5 col-xs-12">
+										<label for="" class="control-label">Nomor :</label>
+										<input type="text" id="nomor" class="form-control" placeholder="1234">
+									</div>
+									<div class="col-lg-4 col-xs-12">
+										<label for="" class="control-label">Seri :</label>
+										<input type="text" id="seri" class="form-control text-uppercase" placeholder="AA">
+									</div>
+								</div><br>
+								<div>
+									<button onclick="cari()" class="btn btn-primary">Cari</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-8 col-xs-12">
+						<div class="hasil">
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
